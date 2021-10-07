@@ -9,6 +9,26 @@ const leilao = {
   lanceInicial: 50,
   descricao: 'Livro bem bacana sobre Vue'
 }
+
+const lances = [
+  {
+    id: 1,
+    valor: 1001,
+    data: '2020-0613T18:04:26.826z',
+    leilao_id: 1
+  },
+  {
+    valor: 1005,
+    data: '2020-0613T18:04:26.826z',
+    leilao_id: 1,
+    id: 2
+  }, {
+    valor: 1099,
+    data: '2020-0613T18:17:49.871z',
+    leilao_id: 1,
+    id: 3
+  }
+]
 describe('Leiloeiro inicia um leilão que não possui lance', () => {
   test('avisa quando não existem lances', async () => {
     getLeilao.mockResolvedValueOnce(leilao)
@@ -29,18 +49,62 @@ describe('Leiloeiro inicia um leilão que não possui lance', () => {
 
 describe('um leiloiero exibe os lances existentes', () => {
   test('Não mostra o aviso de "sem lances" ', async () => {
+    getLeilao.mockResolvedValueOnce(leilao)
+    getLances.mockResolvedValueOnce(lances)
 
+    const wrapper = mount(Leiloeiro, {
+      propsData: {
+        id: 1
+      }
+    })
+
+    await flushPromises()
+    const alerta = wrapper.find('.alert-dark')
+    expect(alerta.exists()).toBe(false)
   })
   test('Possui uma lista de lances', async () => {
+    getLeilao.mockResolvedValueOnce(leilao)
+    getLances.mockResolvedValueOnce(lances)
 
+    const wrapper = mount(Leiloeiro, {
+      propsData: {
+        id: 1
+      }
+    })
+
+    await flushPromises()
+    const alerta = wrapper.find('.list-inline')
+    expect(alerta.exists()).toBe(true)
   })
 })
 
 describe('um leiloiero comunica os valores de menor e maior lance', () => {
   test('Mostra o maior lance daquele leilão', async () => {
+    getLeilao.mockResolvedValueOnce(leilao)
+    getLances.mockResolvedValueOnce(lances)
 
+    const wrapper = mount(Leiloeiro, {
+      propsData: {
+        id: 1
+      }
+    })
+
+    await flushPromises()
+    const maiorLance = wrapper.find('.maior-lance')
+    expect(maiorLance.element.textContent).toContain('Maior lance: R$ 1099')
   })
   test('Mostra o menor lance daquele leilão', async () => {
+    getLeilao.mockResolvedValueOnce(leilao)
+    getLances.mockResolvedValueOnce(lances)
 
+    const wrapper = mount(Leiloeiro, {
+      propsData: {
+        id: 1
+      }
+    })
+
+    await flushPromises()
+    const menorLance = wrapper.find('.menor-lance')
+    expect(menorLance.element.textContent).toContain('Menor lance: R$ 1001')
   })
 })
